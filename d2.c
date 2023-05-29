@@ -2,41 +2,60 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>//підключення бібліотек
-int main() {
-    int array[10];
-    int i, first_positive_index = -1, last_positive_index = -1;
-    int min_abs_value = 0;
-    int min_abs_index = 0;
-    int sum_between_positives = 0;
-    srand(time(NULL) ^ getpid()); // Ініціалізація генератора випадкових чисел
-    // Заповнення масиву випадковими числами від -100 до 100
-    for (i = 0; i < 10; i++) {
-        array[i] = rand() % 201 - 100;
-        printf("%d ", array[i]);
-    }
-    // Знаходження номера мінімального за модулем елемента
-    for (i = 1; i < 10; i++) {
-        if (abs(array[i]) < abs(array[min_abs_index])) {
-            min_abs_index = i;
+int generateRandomNumber(){
+    return rand() % 201 - 100;
+}
+int findMinAbsValue(int array[], int size){
+    int min_abs_value = array[0];
+    int i;
+    for (i = 1; i < size; i++) {
+        if(abs(array[i]) < abs(min_abs_value)){
             min_abs_value = array[i];
         }
     }
-    printf("\nМінімальний за модулем елемент: %d\n", min_abs_value);
-    // Знаходження першого та останнього додатнього елемента
-    for (i = 0; i < 10; i++) {
-        if (array[i] > 0) {
-            if (first_positive_index == -1) {
-                first_positive_index = i;
+    return min_abs_value;
+}
+void findPositiveIndices(int array[], int size, int* first_positive_index, int* last_positive_index){
+    *first_positive_index = -1;
+    *last_positive_index = -1;
+    int i;
+    for (i = 0; i < size; i++){
+        if(array[i] > 0){
+            if(*first_positive_index == -1){
+                *first_positive_index = i;
             }
-            last_positive_index = i;
+            *last_positive_index = i;
         }
     }
-    // Обчислення суми елементів між першим та останнім додатніми елементами
-    if (first_positive_index != -1 && last_positive_index != -1) {
-        for (i = first_positive_index + 1; i < last_positive_index; i++) {
-            sum_between_positives += array[i];
-        }
+}
+int calculatesumbetweenPosivies(int array[], int size, int first_positive_index, int last_positive_index){
+    int sum_between_positives = 0;
+    int i;
+    for (i = first_positive_index + 1; i < last_positive_index; i++){
+        sum_between_positives += array[i];
     }
-    printf("Сума елементів між першим та останнім додатніми: %d\n", sum_between_positives);
-  return 0;
+    return sum_between_positives;
+}
+int main(){
+    int array[10];
+    int i, first_positive_index, last_positive_index;
+    int min_abs_value, sum_between_positives;
+    srand(time(NULL) ^ getpid());
+    //заповнюємо масив випадковими числами
+    for(i = 0; i < 10; i++){
+        array[i] = generateRandomNumber();
+        printf("%d ", array[i]);
+    }
+printf("\n");
+//знаходимо мінамільний за модулем елемент
+min_abs_value = findMinAbsValue(array, 10);
+printf("мінімальний за модулем елемент: %d\n", min_abs_value);
+//знаходимо перший і останній додатній елемент
+findPositiveIndices(array, 10, &first_positive_index, &last_positive_index);\
+//обчислюємо суму елементів між першим і останнім додатнім елементом
+if(first_positive_index != -1 && last_positive_index != -1){
+    sum_between_positives = calculatesumbetweenPosivies(array, 10, first_positive_index, last_positive_index);
+    printf("Сума елементів між першим та останнім додатнім елементом: %d\n", sum_between_positives);
+   }
+   return 0;
 }
